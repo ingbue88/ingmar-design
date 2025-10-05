@@ -27,6 +27,12 @@
               pointer-events: none;
               z-index: 9999;
               transform: translate(-50%, -50%);
+              opacity: 0; /* Start invisible */
+              transition: opacity 0.2s ease; /* Fast fade-in */
+          }
+
+          #custom-cursor.visible {
+              opacity: 1; /* Full opacity when visible */
           }
 
           #custom-cursor::before,
@@ -53,13 +59,13 @@
 
           /* When moving - expand to cross */
           #custom-cursor.moving::before {
-              width: 20px;  /* Horizontal bar */
+              width: 20px;
               height: 4px;
           }
 
           #custom-cursor.moving::after {
               width: 4px;
-              height: 20px; /* Vertical bar */
+              height: 20px;
           }
 
           /* Only show custom cursor on hover-capable devices */
@@ -143,6 +149,11 @@
               .menu-item:hover {
                   color: #333333;
               }
+
+              .hide-all-cursors,
+              .hide-all-cursors * {
+                  cursor: none !important;
+              }
           }
 
 
@@ -169,15 +180,16 @@
 
           logoLink.addEventListener('click', function(e) {
               e.preventDefault();
+              console.log('Logo clicked, menuOpen:', menuOpen);
 
               if (!menuOpen) {
                   menuShape.classList.add('open');
-                  document.getElementById('menu-items').classList.add('open'); // Add this line
+                  document.getElementById('menu-items').classList.add('open');
                   logo.classList.add('menu-active');
                   menuOpen = true;
               } else {
                   menuShape.classList.remove('open');
-                  document.getElementById('menu-items').classList.remove('open'); // Add this line
+                  document.getElementById('menu-items').classList.remove('open');
                   logo.classList.remove('menu-active');
                   menuOpen = false;
               }
@@ -193,10 +205,28 @@
                   !logoLink.contains(e.target)) {
 
                   menuShape.classList.remove('open');
-                  menuItems.classList.remove('open'); // Add this line
+                  menuItems.classList.remove('open');
                   logo.classList.remove('menu-active');
                   menuOpen = false;
               }
+          });
+
+          // Close menu when clicking menu items
+          const menuItemElements = document.querySelectorAll('.menu-item');
+          menuItemElements.forEach(item => {
+              item.addEventListener('click', function(e) {
+                  e.preventDefault();
+                  const href = this.href;
+
+                  menuShape.classList.remove('open');
+                  document.getElementById('menu-items').classList.remove('open');
+                  logo.classList.remove('menu-active');
+                  menuOpen = false;
+
+                  setTimeout(() => {
+                      window.location.href = href;
+                  }, 400);
+              });
           });
 
           // Custom cursor tracking (only for mouse devices)
@@ -205,6 +235,7 @@
               let mouseTimer;
 
               function expandCursor() {
+                  cursor.classList.add('visible'); // Make visible on first movement
                   cursor.classList.add('moving');
                   clearTimeout(mouseTimer);
                   mouseTimer = setTimeout(() => {
@@ -218,51 +249,18 @@
                   expandCursor();
               });
 
-              // Add click event listeners
               document.addEventListener('mousedown', function(e) {
-                  if (e.button === 0 || e.button === 2) { // Left (0) or Right (2) click
+                  if (e.button === 0 || e.button === 2) {
                       expandCursor();
                   }
               });
 
               document.addEventListener('mouseup', function(e) {
-                  if (e.button === 0 || e.button === 2) { // Left (0) or Right (2) click
+                  if (e.button === 0 || e.button === 2) {
                       expandCursor();
                   }
               });
           }
-
-          // Add this NEW block for menu items:
-          const menuItemElements = document.querySelectorAll('.menu-item');
-          menuItemElements.forEach(item => {
-              item.addEventListener('click', function(e) {
-                  e.preventDefault(); // Stop immediate navigation
-
-                  const href = this.href; // Save the destination
-
-                  // Close menu smoothly (same as logo click)
-                  menuShape.classList.remove('open');
-                  document.getElementById('menu-items').classList.remove('open');
-                  logo.classList.remove('menu-active');
-                  menuOpen = false;
-
-                  // Navigate after transition completes (400ms)
-                  setTimeout(() => {
-                      window.location.href = href;
-                  }, 230);
-              });
-          });
-
-          item.addEventListener('click', function(e) {
-              e.stopPropagation(); // Prevent event bubbling
-
-              if (menuOpen) {
-                  menuShape.classList.remove('open');
-                  document.getElementById('menu-items').classList.remove('open');
-                  logo.classList.remove('menu-active');
-                  menuOpen = false;
-              }
-          });
       });
   </script>
   </body>
