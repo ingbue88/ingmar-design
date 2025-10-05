@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Headland+One&display=swap" rel="stylesheet">
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -68,7 +71,7 @@
           #logo {
               width: 50px;
               height: 80px;
-              transition: filter 0.3s ease;
+              transition: filter 0.25s ease;
               position: relative;
               z-index: 10;
               filter: brightness(0) saturate(100%) invert(35%) sepia(64%) saturate(1215%) hue-rotate(331deg) brightness(99%) contrast(94%);
@@ -76,10 +79,10 @@
 
           #menu-shape {
               position: fixed;
-              top: 0;
-              left: -520px;
-              width: 400px;
-              height: 100vh;
+              top: -25vh;
+              left: -800px;
+              width: 600px;
+              height: 140vh;
               background-color: #e74c3c;
               transform: skewX(-15deg);
               transition: left 0.2s ease;
@@ -87,7 +90,7 @@
           }
 
           #menu-shape.open {
-              left: -200px;
+              left: -400px;
           }
 
           #logo.menu-active {
@@ -102,64 +105,131 @@
               #logo:hover {
                   filter: brightness(0) saturate(100%) invert(19%) sepia(79%) saturate(0%) hue-rotate(271deg) brightness(89%) contrast(98%);
               }
+
+              #menu-items {
+                  position: fixed;
+                  top: 200px;
+                  left: -500px; /* Move completely off-screen */
+                  z-index: 15;
+                  transition: left 0.4s ease;
+              }
+
+              #menu-items.open {
+                  left: 25px; /* Slide to visible position */
+              }
+
+              .menu-item {
+                  display: block;
+                  color: white;
+                  text-decoration: none;
+                  font-size: 16px;
+                  font-family: 'Headland One', serif;
+                  font-weight: 400;
+                  margin-bottom: 20px;
+                  transition: color 0.3s ease; /* Add smooth transition */
+              }
+
+              .menu-item:hover {
+                  color: #333333;
+              }
           }
-          }
+
 
       </style>
   </head>
   <body>
-    <div id="custom-cursor"></div>
-    <div id ="menu-shape"></div>
-    <a href="/" id="logo-link">
-        <img src="/ingmar-design-logo.svg" alt="Ingmar Buchner Logo" id="logo">
-    </a>
-    <div id="app"></div>
-    <!-- <script type="module" src="/src/main.ts"></script> -->
+  <div id="custom-cursor"></div>
+  <div id="menu-shape"></div>
+  <div id="menu-items">
+      <a href="/" class="menu-item">Home</a>
+      <a href="/contact" class="menu-item">Contact</a>
+  </div>
+  <a href="/" id="logo-link">
+      <img src="/ingmar-design-logo.svg" alt="Ingmar Buchner Logo" id="logo">
+  </a>
+  <div id="app"></div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const logo = document.getElementById('logo');
-            const logoLink = document.getElementById('logo-link');
-            const menuShape = document.getElementById('menu-shape');
-            let menuOpen = false;
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const logo = document.getElementById('logo');
+          const logoLink = document.getElementById('logo-link');
+          const menuShape = document.getElementById('menu-shape');
+          let menuOpen = false;
 
-            logoLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                console.log('Logo clicked, menuOpen:', menuOpen); // Debug line
+          logoLink.addEventListener('click', function(e) {
+              e.preventDefault();
 
-                if (!menuOpen) {
-                    menuShape.classList.add('open');
-                    logo.classList.add('menu-active');
-                    menuOpen = true;
-                } else {
-                    menuShape.classList.remove('open');
-                    logo.classList.remove('menu-active');
-                    menuOpen = false;
-                }
-            });
-            // Click outside menu to close it
-            document.addEventListener('click', function(e) {
-                // Check if menu is open and click is outside both logo and menu
-                if (menuOpen &&
-                    !menuShape.contains(e.target) &&
-                    !logoLink.contains(e.target)) {
+              if (!menuOpen) {
+                  menuShape.classList.add('open');
+                  document.getElementById('menu-items').classList.add('open'); // Add this line
+                  logo.classList.add('menu-active');
+                  menuOpen = true;
+              } else {
+                  menuShape.classList.remove('open');
+                  document.getElementById('menu-items').classList.remove('open'); // Add this line
+                  logo.classList.remove('menu-active');
+                  menuOpen = false;
+              }
+          });
 
-                    menuShape.classList.remove('open');
-                    logo.classList.remove('menu-active');
-                    menuOpen = false;
-                }
-            });
-            // Custom cursor tracking (only for mouse devices)
-            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-                const cursor = document.getElementById('custom-cursor');
+          // Click outside menu to close it
+          document.addEventListener('click', function(e) {
+              const menuItems = document.getElementById('menu-items');
 
-                document.addEventListener('mousemove', function(e) {
-                    cursor.style.left = e.clientX + 'px';
-                    cursor.style.top = e.clientY + 'px';
-                });
-            }
-        });
+              if (menuOpen &&
+                  !menuShape.contains(e.target) &&
+                  !menuItems.contains(e.target) &&
+                  !logoLink.contains(e.target)) {
 
-    </script>
+                  menuShape.classList.remove('open');
+                  menuItems.classList.remove('open'); // Add this line
+                  logo.classList.remove('menu-active');
+                  menuOpen = false;
+              }
+          });
+
+          // Custom cursor tracking
+          if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+              const cursor = document.getElementById('custom-cursor');
+
+              document.addEventListener('mousemove', function(e) {
+                  cursor.style.left = e.clientX + 'px';
+                  cursor.style.top = e.clientY + 'px';
+              });
+          }
+
+          // Add this NEW block for menu items:
+          const menuItemElements = document.querySelectorAll('.menu-item');
+          menuItemElements.forEach(item => {
+              item.addEventListener('click', function(e) {
+                  e.preventDefault(); // Stop immediate navigation
+
+                  const href = this.href; // Save the destination
+
+                  // Close menu smoothly (same as logo click)
+                  menuShape.classList.remove('open');
+                  document.getElementById('menu-items').classList.remove('open');
+                  logo.classList.remove('menu-active');
+                  menuOpen = false;
+
+                  // Navigate after transition completes (400ms)
+                  setTimeout(() => {
+                      window.location.href = href;
+                  }, 400);
+              });
+          });
+
+          item.addEventListener('click', function(e) {
+              e.stopPropagation(); // Prevent event bubbling
+
+              if (menuOpen) {
+                  menuShape.classList.remove('open');
+                  document.getElementById('menu-items').classList.remove('open');
+                  logo.classList.remove('menu-active');
+                  menuOpen = false;
+              }
+          });
+      });
+  </script>
   </body>
 </html>
