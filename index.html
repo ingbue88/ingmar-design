@@ -10,12 +10,64 @@
               background-color: #eae5df;
               color: #333333;
               margin: 20px;
-              padding: 0px;
+              padding: 1px;
+              cursor: none; /* Hide default cursor */
+          }
+
+          /* Custom cross cursor */
+          #custom-cursor {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 20px;
+              height: 20px;
+              pointer-events: none;
+              z-index: 9999;
+              transform: translate(-50%, -50%);
+          }
+
+          #custom-cursor::before,
+          #custom-cursor::after {
+              content: '';
+              position: absolute;
+              background-color: #333333;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+          }
+
+          /* Horizontal rectangle */
+          #custom-cursor::before {
+              width: 20px;  /* Edit this for length */
+              height: 4px;  /* Edit this for width */
+          }
+
+          /* Vertical rectangle */
+          #custom-cursor::after {
+              width: 4px;   /* Edit this for width */
+              height: 20px; /* Edit this for length */
+          }
+
+          /* Only show custom cursor on hover-capable devices */
+          @media (hover: hover) and (pointer: fine) {
+              * {
+                  cursor: none;
+              }
+          }
+
+          @media not all and (hover: hover) and (pointer: fine) {
+              * {
+                  cursor: auto !important;
+              }
+
+              #custom-cursor {
+                  display: none;
+              }
           }
 
           #logo {
-              width: 100px;
-              height: 100px;
+              width: 50px;
+              height: 80px;
               transition: filter 0.3s ease;
               position: relative;
               z-index: 10;
@@ -56,6 +108,7 @@
       </style>
   </head>
   <body>
+    <div id="custom-cursor"></div>
     <div id ="menu-shape"></div>
     <a href="/" id="logo-link">
         <img src="/ingmar-design-logo.svg" alt="Ingmar Buchner Logo" id="logo">
@@ -84,7 +137,29 @@
                     menuOpen = false;
                 }
             });
+            // Click outside menu to close it
+            document.addEventListener('click', function(e) {
+                // Check if menu is open and click is outside both logo and menu
+                if (menuOpen &&
+                    !menuShape.contains(e.target) &&
+                    !logoLink.contains(e.target)) {
+
+                    menuShape.classList.remove('open');
+                    logo.classList.remove('menu-active');
+                    menuOpen = false;
+                }
+            });
+            // Custom cursor tracking (only for mouse devices)
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                const cursor = document.getElementById('custom-cursor');
+
+                document.addEventListener('mousemove', function(e) {
+                    cursor.style.left = e.clientX + 'px';
+                    cursor.style.top = e.clientY + 'px';
+                });
+            }
         });
+
     </script>
   </body>
 </html>
