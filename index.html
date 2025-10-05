@@ -37,18 +37,29 @@
               top: 50%;
               left: 50%;
               transform: translate(-50%, -50%);
+              transition: width 0.3s ease, height 0.3s ease;
           }
 
-          /* Horizontal rectangle */
+          /* Both start as squares (4x4) */
           #custom-cursor::before {
-              width: 20px;  /* Edit this for length */
-              height: 4px;  /* Edit this for width */
+              width: 4px;
+              height: 4px;
           }
 
-          /* Vertical rectangle */
           #custom-cursor::after {
-              width: 4px;   /* Edit this for width */
-              height: 20px; /* Edit this for length */
+              width: 4px;
+              height: 4px;
+          }
+
+          /* When moving - expand to cross */
+          #custom-cursor.moving::before {
+              width: 20px;  /* Horizontal bar */
+              height: 4px;
+          }
+
+          #custom-cursor.moving::after {
+              width: 4px;
+              height: 20px; /* Vertical bar */
           }
 
           /* Only show custom cursor on hover-capable devices */
@@ -188,13 +199,36 @@
               }
           });
 
-          // Custom cursor tracking
+          // Custom cursor tracking (only for mouse devices)
           if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
               const cursor = document.getElementById('custom-cursor');
+              let mouseTimer;
+
+              function expandCursor() {
+                  cursor.classList.add('moving');
+                  clearTimeout(mouseTimer);
+                  mouseTimer = setTimeout(() => {
+                      cursor.classList.remove('moving');
+                  }, 150);
+              }
 
               document.addEventListener('mousemove', function(e) {
                   cursor.style.left = e.clientX + 'px';
                   cursor.style.top = e.clientY + 'px';
+                  expandCursor();
+              });
+
+              // Add click event listeners
+              document.addEventListener('mousedown', function(e) {
+                  if (e.button === 0 || e.button === 2) { // Left (0) or Right (2) click
+                      expandCursor();
+                  }
+              });
+
+              document.addEventListener('mouseup', function(e) {
+                  if (e.button === 0 || e.button === 2) { // Left (0) or Right (2) click
+                      expandCursor();
+                  }
               });
           }
 
