@@ -9,14 +9,82 @@
           body {
               background-color: #eae5df;
               color: #333333;
-              margin: 0;
-              padding: 0;
+              margin: 20px;
+              padding: 0px;
           }
+
+          #logo {
+              width: 100px;
+              height: 100px;
+              transition: filter 0.3s ease;
+              position: relative;
+              z-index: 10;
+              filter: brightness(0) saturate(100%) invert(35%) sepia(64%) saturate(1215%) hue-rotate(331deg) brightness(99%) contrast(94%);
+          }
+
+          #menu-shape {
+              position: fixed;
+              top: 0;
+              left: -520px;
+              width: 400px;
+              height: 100vh;
+              background-color: #e74c3c;
+              transform: skewX(-15deg);
+              transition: left 0.2s ease;
+              z-index: 5;
+          }
+
+          #menu-shape.open {
+              left: -200px;
+          }
+
+          #logo.menu-active {
+              filter: brightness(0) saturate(100%) invert(93%) sepia(13%) saturate(306%) hue-rotate(322deg) brightness(105%) contrast(84%);
+          }
+
+          @media (hover: hover) and (pointer: fine) {
+              #logo.menu-active:hover {
+                  filter: brightness(0) saturate(100%) invert(19%) sepia(79%) saturate(0%) hue-rotate(271deg) brightness(89%) contrast(98%);
+              }
+
+              #logo:hover {
+                  filter: brightness(0) saturate(100%) invert(19%) sepia(79%) saturate(0%) hue-rotate(271deg) brightness(89%) contrast(98%);
+              }
+          }
+          }
+
       </style>
   </head>
   <body>
-    <img src="/ingmar-design-logo.svg" alt="My Logo" id="logo">
+    <div id ="menu-shape"></div>
+    <a href="/" id="logo-link">
+        <img src="/ingmar-design-logo.svg" alt="Ingmar Buchner Logo" id="logo">
+    </a>
     <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
+    <!-- <script type="module" src="/src/main.ts"></script> -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logo = document.getElementById('logo');
+            const logoLink = document.getElementById('logo-link');
+            const menuShape = document.getElementById('menu-shape');
+            let menuOpen = false;
+
+            logoLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Logo clicked, menuOpen:', menuOpen); // Debug line
+
+                if (!menuOpen) {
+                    menuShape.classList.add('open');
+                    logo.classList.add('menu-active');
+                    menuOpen = true;
+                } else {
+                    menuShape.classList.remove('open');
+                    logo.classList.remove('menu-active');
+                    menuOpen = false;
+                }
+            });
+        });
+    </script>
   </body>
 </html>
